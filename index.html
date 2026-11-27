@@ -173,7 +173,7 @@
       <button type="button" class="close-modal" id="closeContactModal" aria-label="Close popup">&times;</button>
     </div>
 
-    <form id="contactForm" action="https://web3forms.com" method="POST">
+    <form id="contactForm" action="https://api.web3forms.com/submit" method="POST">
       <input type="hidden" name="access_key" value="14973100-0951-4605-9884-79d19d4cdd05">
       <input type="hidden" name="subject" value="New Portfolio Inquiry">
       <input type="checkbox" name="botcheck" style="display: none;">
@@ -198,7 +198,7 @@
     </form>
   </div>
 </div>
- <!-- Modal & Web3Forms Submission Script -->
+   <!-- Modal & Web3Forms Submission Script -->
   <script>
     const modal = document.getElementById("contactModal");
     const openBtns = document.querySelectorAll(".open-contact-modal");
@@ -206,6 +206,7 @@
     const form = document.getElementById("contactForm");
     const statusText = document.getElementById("formStatus");
 
+    // Open popup from any trigger button
     openBtns.forEach((btn) => {
       btn.addEventListener("click", () => {
         modal.classList.add("active");
@@ -213,6 +214,7 @@
       });
     });
 
+    // Close popup on X button or outside click
     closeBtn.addEventListener("click", () => {
       modal.classList.remove("active");
       modal.setAttribute("aria-hidden", "true");
@@ -225,6 +227,7 @@
       }
     });
 
+    // Close popup on Escape key
     document.addEventListener("keydown", (e) => {
       if (e.key === "Escape" && modal.classList.contains("active")) {
         modal.classList.remove("active");
@@ -232,27 +235,23 @@
       }
     });
 
+    // Submit form cleanly via Web3Forms using FormData
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
       statusText.textContent = "Sending...";
       statusText.style.color = "var(--text-muted)";
 
       const formData = new FormData(form);
-      const json = JSON.stringify(Object.fromEntries(formData));
 
       try {
-        const response = await fetch("https://web3forms.com", {
+        const response = await fetch("https://api.web3forms.com/submit", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Accept": "application/json"
-          },
-          body: json
+          body: formData
         });
 
         const result = await response.json();
 
-        if (response.ok) {
+        if (result.success) {
           statusText.textContent = "Message sent! I'll get back to you soon.";
           statusText.style.color = "var(--accent-text)";
           form.reset();
@@ -266,6 +265,7 @@
       }
     });
   </script>
+
 
 </body>
 </html>
